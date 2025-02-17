@@ -40,7 +40,7 @@ function init() {
     controls.minDistance = 8;
     controls.rotateSpeed = 0.5;
     controls.zoomSpeed = 0.8;
-    controls.autoRotate = true;
+    controls.autoRotate = false;
     controls.autoRotateSpeed = 0.5;
     controls.enabled = window.innerWidth > 768; // Отключаем контролы на мобильных
 
@@ -171,12 +171,12 @@ function onScroll() {
     const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
     const scrollProgress = scrollY / maxScroll;
     
-    // Вращение Земли при скролле
-    targetRotationY = scrollProgress * Math.PI * 4; // Два полных оборота
+    // Увеличиваем чувствительность вращения
+    targetRotationY = scrollProgress * Math.PI * 8; // Четыре полных оборота
     
     // Плавное изменение позиции камеры
     if (earth) {
-        camera.position.z = 15 - scrollProgress * 3; // Немного приближаем камеру при скролле
+        camera.position.z = 15 - scrollProgress * 5; // Увеличиваем эффект приближения
         camera.lookAt(scene.position);
     }
 }
