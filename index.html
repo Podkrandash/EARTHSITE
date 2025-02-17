@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="EARTH Token - Революционный токен на бирже Blum">
+    <meta name="theme-color" content="#000000">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <title>EARTH Token - Blum Exchange</title>
+    <link rel="icon" type="image/png" href="textures/favicon.png">
+    <style>
+        :root {
+            --primary: #4A90E2;
+            --secondary: #34D399;
+            --dark: #0B0B1E;
+            --text: #FFFFFF;
+        }
+
+        body {
+            margin: 0;
+            background: var(--dark);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            color: var(--text);
+            overflow-x: hidden;
+        }
+
+        canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            touch-action: none;
+        }
+
+        .content {
+            position: relative;
+            z-index: 2;
+        }
+
+        section {
+            min-height: 100vh;
+            padding: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .hero {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .title {
+            font-size: clamp(2.5rem, 8vw, 4rem);
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .subtitle {
+            font-size: clamp(1.2rem, 4vw, 1.5rem);
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: bold;
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            border: none;
+            font-size: 1.1rem;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(74, 144, 226, 0.3);
+        }
+
+        .roadmap {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        .roadmap-title {
+            text-align: center;
+            font-size: clamp(2rem, 6vw, 3rem);
+            margin-bottom: 3rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .roadmap-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .roadmap-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .roadmap-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 20px rgba(74, 144, 226, 0.2);
+        }
+
+        .roadmap-item h3 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .roadmap-item ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .roadmap-item li {
+            margin-bottom: 0.8rem;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .roadmap-item li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 8px;
+            height: 8px;
+            background: var(--secondary);
+            border-radius: 50%;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 4rem auto;
+            padding: 0 2rem;
+        }
+
+        .feature-item {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .feature-item h3 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--dark);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            flex-direction: column;
+        }
+
+        .loading-text {
+            color: white;
+            font-size: clamp(1.2rem, 4vw, 1.5rem);
+            margin-top: 1rem;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        .error {
+            display: none;
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 68, 68, 0.9);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            z-index: 1000;
+            text-align: center;
+            max-width: 80vw;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            section {
+                padding: 1rem;
+            }
+
+            .roadmap {
+                padding: 2rem 1rem;
+            }
+
+            .features {
+                padding: 0 1rem;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .loading-spinner {
+                animation: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="loading" id="loading">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Загрузка...</div>
+    </div>
+
+    <div class="error" id="error"></div>
+
+    <div class="content">
+        <section class="hero-section">
+            <div class="hero">
+                <h1 class="title">EARTH Token</h1>
+                <p class="subtitle">Революционный токен на бирже Blum</p>
+                <button class="button">Присоединиться</button>
+            </div>
+        </section>
+
+        <section class="features-section">
+            <div class="features">
+                <div class="feature-item">
+                    <h3>Интеграция с Earth Wallet</h3>
+                    <p>Полная интеграция с экосистемой Earth Wallet для максимального удобства пользователей</p>
+                </div>
+                <div class="feature-item">
+                    <h3>Rewards Program</h3>
+                    <p>Уникальная система вознаграждений за хранение EARTH и TON</p>
+                </div>
+                <div class="feature-item">
+                    <h3>DEX Листинг</h3>
+                    <p>Размещение на ведущих децентрализованных биржах</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="roadmap-section">
+            <div class="roadmap">
+                <h2 class="roadmap-title">Roadmap</h2>
+                <div class="roadmap-grid">
+                    <div class="roadmap-item">
+                        <h3>Q1 2024</h3>
+                        <ul>
+                            <li>Запуск токена на бирже Blum</li>
+                            <li>Интеграция с Earth Wallet</li>
+                            <li>Начало программы вознаграждений</li>
+                        </ul>
+                    </div>
+                    <div class="roadmap-item">
+                        <h3>Q2 2024</h3>
+                        <ul>
+                            <li>Листинг на ведущих DEX</li>
+                            <li>Расширение экосистемы</li>
+                            <li>Запуск новых продуктов</li>
+                        </ul>
+                    </div>
+                    <div class="roadmap-item">
+                        <h3>Q3-Q4 2024</h3>
+                        <ul>
+                            <li>Глобальное партнерство</li>
+                            <li>Запуск DeFi сервисов</li>
+                            <li>Развитие community</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        window.onerror = function(msg, url, lineNo, columnNo, error) {
+            const errorDiv = document.getElementById('error');
+            errorDiv.style.display = 'block';
+            errorDiv.textContent = 'Произошла ошибка: ' + msg;
+            console.error('Error:', {
+                message: msg,
+                url: url,
+                line: lineNo,
+                column: columnNo,
+                error: error
+            });
+            return false;
+        };
+
+        let resourcesLoaded = false;
+        let mainScriptLoaded = false;
+
+        function hideLoading() {
+            if (resourcesLoaded && mainScriptLoaded) {
+                const loading = document.getElementById('loading');
+                loading.style.opacity = '0';
+                loading.style.transition = 'opacity 0.5s ease';
+                setTimeout(() => {
+                    loading.style.display = 'none';
+                }, 500);
+            }
+        }
+
+        window.addEventListener('load', function() {
+            resourcesLoaded = true;
+            hideLoading();
+        });
+
+        function checkWebGL() {
+            const canvas = document.createElement('canvas');
+            const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+            if (!gl) {
+                const errorDiv = document.getElementById('error');
+                errorDiv.style.display = 'block';
+                errorDiv.textContent = 'Ваш браузер не поддерживает WebGL, необходимый для работы приложения';
+                return false;
+            }
+            return true;
+        }
+
+        if (!checkWebGL()) {
+            document.getElementById('loading').style.display = 'none';
+        }
+    </script>
+
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+            }
+        }
+    </script>
+    <script type="module" src="main.js" 
+            onload="mainScriptLoaded = true; hideLoading();" 
+            onerror="console.error('Ошибка загрузки main.js'); document.getElementById('error').textContent = 'Ошибка загрузки основного скрипта';">
+    </script>
+</body>
+</html> 
