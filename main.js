@@ -171,23 +171,12 @@ function onScroll() {
     const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
     const scrollProgress = scrollY / maxScroll;
     
+    // Вращение Земли при скролле
     targetRotationY = scrollProgress * Math.PI * 4; // Два полных оборота
     
-    // Изменяем позицию камеры в зависимости от скролла
+    // Плавное изменение позиции камеры
     if (earth) {
-        const section = Math.floor(scrollProgress * 3); // 3 секции
-        switch(section) {
-            case 0: // Первая секция - вид спереди
-                camera.position.z = 15 - scrollProgress * 5;
-                break;
-            case 1: // Вторая секция - вид сбоку
-                camera.position.x = Math.sin(scrollProgress * Math.PI) * 15;
-                camera.position.z = Math.cos(scrollProgress * Math.PI) * 15;
-                break;
-            case 2: // Третья секция - вид сверху
-                camera.position.y = scrollProgress * 10;
-                break;
-        }
+        camera.position.z = 15 - scrollProgress * 3; // Немного приближаем камеру при скролле
         camera.lookAt(scene.position);
     }
 }
